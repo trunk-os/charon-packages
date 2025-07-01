@@ -1,0 +1,10 @@
+{
+  "title": {
+    "name": "example_package",
+    "version": "0.0.1"
+  },
+  "description": "Please modify this description",
+  "source": {
+    "container": "scratch"
+  }
+}
