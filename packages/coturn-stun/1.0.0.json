@@ -52,7 +52,7 @@
     {
       "template": "stun_hostname",
       "question": "What hostname should the STUN server use?",
-      "input_type": "name"
+      "input_type": "string"
     }
   ]
 }
