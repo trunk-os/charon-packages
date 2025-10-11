@@ -8,7 +8,7 @@
     "container": "docker://nginx:latest"
   },
   "storage": {
-    "volumes": [],
+    "volumes": []
   },
   "networking": {
     "forward_ports": [["80", "80"]],
