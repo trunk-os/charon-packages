@@ -5,7 +5,7 @@
   },
   "description": "Serve the nginx example page, exposed on port 8000",
   "source": {
-    "container": "docker://nginx:latest"
+    "container": "nginx:latest"
   },
   "storage": {
     "volumes": []
