@@ -7,11 +7,7 @@
   "source": {
     "container": "nginx:latest"
   },
-  "storage": {
-    "volumes": []
-  },
   "networking": {
-    "forward_ports": [["8888", "80"]],
-    "expose_ports": [["8888", "8888"]]
+    "expose_ports": [["8888", "80"]]
   }
 }
