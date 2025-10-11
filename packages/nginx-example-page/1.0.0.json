@@ -1,0 +1,19 @@
+{
+  "title": {
+    "name": "nginx-example-page",
+    "version": "1.0.0"
+  },
+  "description": "Serve the nginx example page, exposed on port 8000",
+  "source": {
+    "container": "docker://nginx:latest"
+  },
+  "networking": {
+    "forward_ports": [["80", "80"]],
+    "expose_ports": [["80", "8000"]]
+  },
+  "system": {
+    "host_pid": "false",
+    "host_net": "false",
+    "privileged": "false"
+  }
+}
