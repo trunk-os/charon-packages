@@ -8,6 +8,13 @@
     "container": "nginx:latest"
   },
   "networking": {
-    "expose_ports": [["8888", "80"]]
-  }
+    "expose_ports": [["?exposed_port?", "80"]]
+  },
+  "prompts": [
+    {
+      "template": "exposed_port",
+      "question": "What port should we expose this server to?",
+      "input_type": "string"
+    }
+  ]
 }
