@@ -10,10 +10,5 @@
   "networking": {
     "forward_ports": [["80", "80"]],
     "expose_ports": [["80", "8000"]]
-  },
-  "system": {
-    "host_pid": "false",
-    "host_net": "false",
-    "privileged": "false"
   }
 }
