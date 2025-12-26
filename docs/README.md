@@ -1,12 +1,9 @@
 This is the documentation for the Charon Package Format.
-
 # This is an Obsidian Repository
 
-This directory can be used as an [obsidian vault](https://obsidian.md)for easier browsing and editing. Just open it as a vault. Note, I use vim mode so use the reader.
+This directory can be used as an [obsidian vault](https://obsidian.md)for easier browsing and editing. Feel free to submit pull requests if you think they'd be useful.
 
-Features:
+Please see the top level [README](../README.md) for an exposition on the feature set of this format.
+# Where to Start
 
-- Runtime Integration: You mostly describe how your package _runs_. How it manages storage, how it talks to the network, where it comes from.
-- Uses container images or qemu.
-    - Qemu still needs a lot of work
-    - LXC is coming as a lightweight alternative for situations where Qemu is too heavy and container images are too simple.
+Familiarize yourself with the [Terminology](./Terminology.md), then review [Filesystem Organization](./Filesystem Organization.md) and [Package Specification](./Package Specification.md) to finalize basic understanding of the system. Further reading likely depends on where your interests lie.
