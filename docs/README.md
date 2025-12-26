@@ -6,4 +6,4 @@ This directory can be used as an [obsidian vault](https://obsidian.md) for easie
 Please see the top level [README](../README.md) for an exposition on the feature set of this format.
 # Where to Start
 
-Familiarize yourself with the [Terminology](./Terminology.md), then review [Filesystem%20Organization](https://github.com/trunk-os/charon-packages/blob/main/docs/Filesystem%20Organization.md) and [Package Specification](https://github.com/trunk-os/charon-packages/blob/main/docs/Packaging%20Specification.md) to finalize basic understanding of the system. Further reading likely depends on where your interests lie.
+Familiarize yourself with the [Terminology](./Terminology.md), then review [Filesystem Organization](https://github.com/trunk-os/charon-packages/blob/main/docs/Filesystem%20Organization.md) and [Package Specification](https://github.com/trunk-os/charon-packages/blob/main/docs/Packaging%20Specification.md) to finalize basic understanding of the system. Further reading likely depends on where your interests lie.

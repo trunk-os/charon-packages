@@ -1,6 +1,6 @@
 # Packaging Specification
 
-Charon packages have a very specific structure and schema that must be honored for success. Some parameters are required; others must line up with other configuration, such as [filesystem organization](./Filesystem Organization.md) and its relationship to versioning.
+Charon packages have a very specific structure and schema that must be honored for success. Some parameters are required; others must line up with other configuration, such as [filesystem organization](https://github.com/trunk-os/charon-packages/blob/main/docs/Filesystem%20Organization.md) and its relationship to versioning.
 ## Specification Error Behavior
 
 It is important to discuss this first. The following mistakes will result in a package that cannot be launched:
