@@ -119,7 +119,7 @@ It is **required** to be in the document, but **should** be filled in. This allo
 **NOTE:** dependencies are currently **not supported**, they are just defined in the format. [This ticket tracks this feature.](https://github.com/trunk-os/control-plane/issues/22)
 
 This field is **not required**.
-y
+
 `dependencies` contains an array of `title` objects (without the "title" subkey). 
 
 These package definitions **must** exist in the package repository already, along with any variables.
