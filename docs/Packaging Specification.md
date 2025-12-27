@@ -32,6 +32,29 @@ All of these terms in this document should be represented in **bold text** for r
 **NOTE:** These are **not** a part of the package schema, just placed here currently for simplicity's sake. Please "Variables" in the [Filesystem Organization document.](https://github.com/trunk-os/charon-packages/blob/main/docs/Filesystem%20Organization.md)
 
 The variables document is currently **required**, even if you do not use templating. Please see [this issue](https://github.com/trunk-os/control-plane/issues/53) for potential remedies to this hassle.
+
+### Format
+
+All listed fields are currently **required**.
+
+- `name`: must be same as the filename, which corresponds to the package name.
+- `variables`: an object (which may be empty) containing key/pairs of template variable to default value. Values are always string; see the other notes on type management in this document.
+### Example
+
+```json
+{
+  "name": "coturn-stun",
+  "variables": {
+    "default_realm": "example.com",
+    "listening_port": "3478",
+    "tls_listening_port": "5349",
+    "alt_listening_port": "3479",
+    "alt_tls_listening_port": "5350",
+    "min_port": "49152",
+    "max_port": "65535"
+  }
+}
+```
 ## Real World Example
 
 Since it's important to understand what packages look like before discussing the details, here is an example of a real package.
