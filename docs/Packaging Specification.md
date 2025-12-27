@@ -94,10 +94,14 @@ Since it's important to understand what packages look like before discussing the
 }
 ```
 
-## Required Parameters
+## Types
 
-These parameters are **required**; they must exist and have valid data to be accepted.
+Types are a bit different here. Since we can template any type, types of values in the manifest are always string. During processing, they are "compiled", which means the template variables are interpolated and so on, then the types are converted to native types.
 
+What this means for you: you are allowed to use template variables where things like integers or booleans are expected, but be advise any attempt to convert an invalid value at compilation time will result in an error. This is to allow the question/answer system to work effectively in the face of erroneous user input.
+## Top-Level Parameters
+
+These parameters all start at the top-level of the object; more on their innards are below.
 ### title
 
 `title` is the definition of the package which echoes the package name and version. It **must** match its package information in the [filesystem organization.](https://github.com/trunk-os/charon-packages/blob/main/docs/Filesystem%20Organization.md)
@@ -113,7 +117,6 @@ This field is redundant, and is planned to be [removed eventually.](https://gith
 `description` is a friendly description of the project, and appears in the `Projects` list in the Trunk UI as well as a part of the listing API's values for the package.
 
 It is **required** to be in the document, but **should** be filled in. This allowance is to simplify private repositories.
-
 ### dependencies
 
 **NOTE:** dependencies are currently **not supported**, they are just defined in the format. [This ticket tracks this feature.](https://github.com/trunk-os/control-plane/issues/22)
@@ -134,3 +137,98 @@ These package definitions **must** exist in the package repository already, alon
 }
 ```
 
+### source
+
+Source is **required** and **must** resolve to a working image, dependent on the type of execution environment.
+
+Only one parameter can be supplied, and it must be one of the following keys:
+
+- `container`: this key refers to a URL to a container registry, or when shortened, by default refers to [Docker's Registry.](https://hub.docker.com)
+	- Examples:
+		- `nginx:latest` - latest dockerhub nginx image
+		- `https://quay.io/trunk-os/charon:stable` - stable Charon image on quay.io
+- `qemu`: This refers to a QEmu image. The image must be directly raw-writeable to a block device at this time; compression is not yet supported.
+
+#### Example:
+
+```json
+{
+	"source": {
+		"container": "nginx:latest"
+	}
+}
+```
+
+### networking
+
+Networking is **not required**, but has a very strict schema. Particularly, around the port numbers there may be some complication around type management, especially if you are using templates.
+
+- `forward_ports`: this is an array of pairs of integers from 0-65535. The port on the left is exposed on the router through uPnP. The port on the right is the port mapped to in the container or VM.
+- `expose_ports`: same as _forward_ports_, but only exposes ports inside the local network.
+- `internal_network`: builds an internal network for services to cooperate on without exposing that traffic to other network consumers. String name.
+- `hostname`: sets the hostname of the container or VM. String name.
+
+### Example:
+
+```json
+{
+  "title": {
+    "name": "plex-qemu",
+    "version": "0.0.1"
+  },
+  "description": "plex under qemu",
+  "source": {
+    "url": "https://example.com/mirror/ubuntu.img"
+  },
+  "networking": {
+    "forward_ports": [["1234", "5678"]],
+    "expose_ports": [["2345", "6789"]]
+  },
+  "resources": {
+    "cpus": "8",
+    "memory": "4096"
+  }
+}
+```
+
+This forwards port `5678` to port `1234` on the router, and `2345` to `6789` on the internal LAN.
+
+## storage
+
+Storage is **not required**. It contains a single key called `volumes` which describes volumes to be managed; it places these under a zfs dataset created for the package.
+
+### volume schema
+
+Currently, only datasets are created and mapped.
+
+- `name`: **required**. name of volume. It **must not** start with a `/`, must not contain invalid path components, and must be nameable as a zfs filesystem.
+- `size`: **required**. size in bytes. Values like '50G' may also work. Actual block device size for volumes, quote for dataset.
+- `mountpoint`: **not required**. mountpoint inside the container; not used for volumes, only datasets.
+- `type`: **not required**. **Does not exist yet**. The type of device to create; either `volume` or `dataset`.
+- `recreate`: recreate this volume every time the package is managed (reinstall, upgrade, etc). boolean.
+- `private`: mounts the volume differently so that others cannot co-opt the mountpoint (either accidentally or intentionally). Boolean.
+
+### Example
+
+```json
+{
+  "storage": {
+    "volumes": [
+      {
+        "name": "config",
+        "mountpoint": "/var/lib/coturn",
+        "size": "1073741824",
+        "recreate": "false",
+        "private": "true"
+      },
+      {
+        "name": "logs",
+        "mountpoint": "/var/log/coturn",
+        "size": "2147483648",
+        "recreate": "false",
+        "private": "true"
+      }
+    ]
+  },
+}
+```
