@@ -32,7 +32,6 @@ All of these terms in this document should be represented in **bold text** for r
 **NOTE:** These are **not** a part of the package schema, just placed here currently for simplicity's sake. Please "Variables" in the [Filesystem Organization document.](https://github.com/trunk-os/charon-packages/blob/main/docs/Filesystem%20Organization.md)
 
 The variables document is currently **required**, even if you do not use templating. Please see [this issue](https://github.com/trunk-os/control-plane/issues/53) for potential remedies to this hassle.
-
 ### Format
 
 All listed fields are currently **required**.
@@ -260,3 +259,43 @@ Currently, only datasets are created and mapped.
   },
 }
 ```
+
+## system
+
+The system controls runtime-specific settings. The current controls only affect **container deployments**.
+
+This section and all fields are **not required**. These flags may eventually only be honored when turned on by the administrator. These flags **compromise security** and should only be enabled if they resolve a specific problem with your package when turned on. Otherwise, they are basically security holes.
+
+- `host_pid`: boolean, requests that this package run in the host process namespace. Usually used to line up with system services (like systemd).
+- `host_net`: boolean, use the host's network device instead of creating a virtual ethernet device. Used when you the IP stack of the host for some reason, like you can't be behind an internal NAT for some reason.
+- `privileged`: run with all linux capabilities. Extremely dangerous and irresponsible to use unless absolutely necessary (but sometimes, it is).
+- `capabilities`: an array of [linux capabilities](https://www.man7.org/linux/man-pages/man7/capabilities.7.html) to use (the string constant, optionally minus the leading `CAP_`, is what is required). These are useful for unlocking specific super-user functionality in a moderately fine-grained way (such as giving access to the network device in a privileged fashion, combined with `host_net`).
+## resources
+
+Resources controls local resource limits; it's a good idea to set these if you know your service is going to behave in a particular way or with a particular performance profile.
+
+They are required in VM deployments, but for containers they are **not required**. A lack of requirements in container situations means no limits.
+
+- `cpus`: unsigned integer (as string), maximum number of cpus to occupy at once, either through qemu cpu settings, or cpuset.
+- `memory`: unsigned integer (as string), memory, in bytes, to provide to the VM in qemu 
+## prompts
+
+Prompts quiz the user before installation; they can also be automatically answered once and reused (for reinstalls or upgrades) for future deployments of the same package.
+
+Prompts are **not required** but type management and schema are very strictly enforced.
+
+Prompts contain an array of objects that have the following keys:
+
+- `template`: this is the name of the variable that will be used in your strings. It has a corresponding entry in the variables document if you wish to supply it.
+- `question`: this is the question that the user is expected to see.
+- `input_type`: This is the required input type of the answer the user supplies. This is, for variables, where most of the type management happens for variable input. 
+	- Options are:
+		- `integer`
+		- `signed_integer`
+		- `string`
+		- `boolean`
+	- Planned Options:
+		- hostname
+		- socketaddr
+		- path
+		- port (16-bit unsigned)
