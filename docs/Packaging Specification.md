@@ -38,6 +38,12 @@ All listed fields are currently **required**.
 
 - `name`: must be same as the filename, which corresponds to the package name.
 - `variables`: an object (which may be empty) containing key/pairs of template variable to default value. Values are always string; see the other notes on type management in this document.
+
+### Using variables
+
+Using variables requires wrapping the name of the variable in question marks, `?like_so?`. It must exist as a variable, that is the only requirement.
+
+You can define variables as prompts or within the variables file.
 ### Example
 
 ```json
@@ -125,7 +131,7 @@ Since it's important to understand what packages look like before discussing the
 
 Types are a bit different here. Since we can template any type, types of values in the manifest are always string. During processing, they are "compiled", which means the template variables are interpolated and so on, then the types are converted to native types.
 
-What this means for you: you are allowed to use template variables where things like integers or booleans are expected, but be advise any attempt to convert an invalid value at compilation time will result in an error. This is to allow the question/answer system to work effectively in the face of erroneous user input.
+What this means for you: you are allowed to use template variables where things like integers or booleans are expected, but be advised that any attempt to convert an invalid value at compilation time will result in an error. This is to allow the question/answer system to work effectively in the face of erroneous user input.
 ## Top-Level Parameters
 
 These parameters all start at the top-level of the object; more on their innards are below.
@@ -190,30 +196,18 @@ Only one parameter can be supplied, and it must be one of the following keys:
 
 Networking is **not required**, but has a very strict schema. Particularly, around the port numbers there may be some complication around type management, especially if you are using templates.
 
-- `forward_ports`: this is an array of pairs of integers from 0-65535. The port on the left is exposed on the router through uPnP. The port on the right is the port mapped to in the container or VM.
+- `forward_ports`: this is an array of pairs of integers from 0-65535. The port on the left is exposed on the router through uPnP. The port on the right is the port mapped to the container or VM.
 - `expose_ports`: same as _forward_ports_, but only exposes ports inside the local network.
-- `internal_network`: builds an internal network for services to cooperate on without exposing that traffic to other network consumers. String name.
+- `internal_network`: builds an internal network for services to cooperate on without exposing that traffic to other network consumers. String name. All packages that want to leverage this network must use the same name.
 - `hostname`: sets the hostname of the container or VM. String name.
 
 ### Example:
 
 ```json
 {
-  "title": {
-    "name": "plex-qemu",
-    "version": "0.0.1"
-  },
-  "description": "plex under qemu",
-  "source": {
-    "url": "https://example.com/mirror/ubuntu.img"
-  },
   "networking": {
     "forward_ports": [["1234", "5678"]],
     "expose_ports": [["2345", "6789"]]
-  },
-  "resources": {
-    "cpus": "8",
-    "memory": "4096"
   }
 }
 ```
@@ -228,12 +222,12 @@ Storage is **not required**. It contains a single key called `volumes` which des
 
 Currently, only datasets are created and mapped.
 
-- `name`: **required**. name of volume. It **must not** start with a `/`, must not contain invalid path components, and must be nameable as a zfs filesystem.
-- `size`: **required**. size in bytes. Values like '50G' may also work. Actual block device size for volumes, quote for dataset.
+- `name`: **required**. name of volume. It **must not** start with a `/`, **must not** contain invalid path components, and **must** be nameable as a zfs filesystem.
+- `size`: **required**. size in bytes. Values like '50G' should also work; but this needs refinement. Actual block device size for volumes, quota for dataset.
 - `mountpoint`: **not required**. mountpoint inside the container; not used for volumes, only datasets.
 - `type`: **not required**. **Does not exist yet**. The type of device to create; either `volume` or `dataset`.
 - `recreate`: recreate this volume every time the package is managed (reinstall, upgrade, etc). boolean.
-- `private`: mounts the volume differently so that others cannot co-opt the mountpoint (either accidentally or intentionally). Boolean.
+- `private`: mounts the volume differently so that others cannot co-opt the `mountpoint` (either accidentally or intentionally). Boolean. Only affects the optional `mountpoint`.
 
 ### Example
 
@@ -256,7 +250,7 @@ Currently, only datasets are created and mapped.
         "private": "true"
       }
     ]
-  },
+  }
 }
 ```
 
@@ -266,15 +260,17 @@ The system controls runtime-specific settings. The current controls only affect 
 
 This section and all fields are **not required**. These flags may eventually only be honored when turned on by the administrator. These flags **compromise security** and should only be enabled if they resolve a specific problem with your package when turned on. Otherwise, they are basically security holes.
 
+[Here is a ticket to resolve this by using the prompts system to let users permit behavior.](https://github.com/trunk-os/control-plane/issues/56)
+
 - `host_pid`: boolean, requests that this package run in the host process namespace. Usually used to line up with system services (like systemd).
-- `host_net`: boolean, use the host's network device instead of creating a virtual ethernet device. Used when you the IP stack of the host for some reason, like you can't be behind an internal NAT for some reason.
+- `host_net`: boolean, use the host's network device instead of creating a virtual ethernet device. Used when you need access to the IP stack of the host for some reason, or you can't be behind an internal NAT for some reason.
 - `privileged`: run with all linux capabilities. Extremely dangerous and irresponsible to use unless absolutely necessary (but sometimes, it is).
 - `capabilities`: an array of [linux capabilities](https://www.man7.org/linux/man-pages/man7/capabilities.7.html) to use (the string constant, optionally minus the leading `CAP_`, is what is required). These are useful for unlocking specific super-user functionality in a moderately fine-grained way (such as giving access to the network device in a privileged fashion, combined with `host_net`).
 ## resources
 
 Resources controls local resource limits; it's a good idea to set these if you know your service is going to behave in a particular way or with a particular performance profile.
 
-They are required in VM deployments, but for containers they are **not required**. A lack of requirements in container situations means no limits.
+For VMs, they describe the number of cpus and size of memory to make available to the VM; for containers they are limits. Omitted, there is no limit.
 
 - `cpus`: unsigned integer (as string), maximum number of cpus to occupy at once, either through qemu cpu settings, or cpuset.
 - `memory`: unsigned integer (as string), memory, in bytes, to provide to the VM in qemu 
@@ -282,7 +278,7 @@ They are required in VM deployments, but for containers they are **not required*
 
 Prompts quiz the user before installation; they can also be automatically answered once and reused (for reinstalls or upgrades) for future deployments of the same package.
 
-Prompts are **not required** but type management and schema are very strictly enforced.
+Prompts are **not required** but type management and schema are very strictly enforced when used.
 
 Prompts contain an array of objects that have the following keys:
 
@@ -299,3 +295,18 @@ Prompts contain an array of objects that have the following keys:
 		- socketaddr
 		- path
 		- port (16-bit unsigned)
+
+### Example
+
+ ```json
+ {
+	 "networking": {
+		"hostname": "my-cool-hostname-?stun_hostname?"
+	 },
+	 "prompts": {
+		 "template": "stun_hostname",
+		 "question": "What hostname should the STUN server use?",
+		 "input_type": "string"
+	 }
+}
+ ```

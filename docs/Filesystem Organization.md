@@ -22,11 +22,11 @@ packages/nginx-example-page/1.0.0.json
 ```
 ## Variables
 
-Variables are _version-independent_ parameters that are prepopulated to be leveraged by the templating system Charon packages can leverage.
+Variables are _version-independent_ parameters that are prepopulated to be leveraged by the templating system Charon packages use.
 
 Each variable must be in its own filename, named after the package, minus the version. They live under the subtree [variables/](../variables) off the root of the repository.
 
-If you do not require variables, you must still create the file [(with the appropriate schema)](https://github.com/trunk-os/charon-packages/blob/main/docs/Package%20Specification.md). There is a [ticket to resolve this.](https://github.com/trunk-os/control-plane/issues/53) It should not be necessary.
+If you do not require variables, you must still create the file [(with the appropriate schema)](https://github.com/trunk-os/charon-packages/blob/main/docs/Package%20Specification.md). There is a [ticket to resolve this](https://github.com/trunk-os/control-plane/issues/53) -- it should not be necessary.
 
 Example from an early version of this repository:
 
