@@ -27,6 +27,11 @@ All of these terms in this document should be represented in **bold text** for r
 	- Code behavior that does not match a **must**/**must not** is a bug, and [should be reported.](https://github.com/trunk-os/community/issues)
 - **should** and **should not** describe situations where a package creator should follow instructions, but is not required to.
 	- It is not the intention of this specification to use this much; for clarity and simplicity's sake, we prefer solutions that fit **must** and **must not** in these scenarios.
+## Variables
+
+**NOTE:** These are **not** a part of the package schema, just placed here currently for simplicity's sake. Please "Variables" in the [Filesystem Organization document.](https://github.com/trunk-os/charon-packages/blob/main/docs/Filesystem%20Organization.md)
+
+The variables document is currently **required**, even if you do not use templating. Please see [this issue](https://github.com/trunk-os/control-plane/issues/53) for potential remedies to this hassle.
 ## Real World Example
 
 Since it's important to understand what packages look like before discussing the details, here is an example of a real package.
